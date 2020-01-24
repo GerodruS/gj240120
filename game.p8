@@ -8,7 +8,7 @@ function _init()
   {127,127}
  }
  
- enable_mouse=true
+ enable_mouse=false
  if (enable_mouse) poke(0x5f2d,1)
 
  players={
@@ -34,12 +34,18 @@ function _update60()
   local p=i+1
   local d=1
   
-  if (btn(🅾️,i)) d=3
-  if (btn(➡️,i)) players[p][1]+=d
-	 if (btn(⬅️,i)) players[p][1]-=d
-	 if (btn(⬆️,i)) players[p][2]-=d
-	 if (btn(⬇️,i)) players[p][2]+=d
-
+  if btn(🅾️,i) then
+	  if (btnp(➡️,i)) players[p][1]+=d
+		 if (btnp(⬅️,i)) players[p][1]-=d
+		 if (btnp(⬆️,i)) players[p][2]-=d
+		 if (btnp(⬇️,i)) players[p][2]+=d
+  else
+   if (btn(➡️,i)) players[p][1]+=d
+		 if (btn(⬅️,i)) players[p][1]-=d
+		 if (btn(⬆️,i)) players[p][2]-=d
+		 if (btn(⬇️,i)) players[p][2]+=d
+  end
+  
   if enable_mouse and i==0 then
    players[p][1]=stat(32)
    players[p][2]=stat(33)
@@ -79,8 +85,8 @@ function _update60()
 end
 
 function _draw()
- cls()
--- fizzlefader.draw(128)
+-- cls()
+ fizzlefader.draw(400)
  map(0,0,0,0)
  
  if count(targets)==0 then
