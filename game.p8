@@ -20,6 +20,8 @@ function _init()
  
  targets={}
  generate_targets()
+ 
+ fizzlefader=new_fizzlefader()
 end
 
 function _update60()
@@ -48,8 +50,7 @@ function _update60()
   players[p][2]=max(0,players[p][2])
   players[p][2]=min(127,players[p][2])
  
-  local fire=btnp(❎,i) or enable_mouse and i==0 and stat(34)==1
-  if fire then --fire
+  if is_fire(i) then
    local target_to_remove
    for t=1,count(targets) do
 		  local dx=targets[t][1]-players[p][1]
@@ -79,6 +80,7 @@ end
 
 function _draw()
  cls()
+-- fizzlefader.draw(128)
  map(0,0,0,0)
  
  if count(targets)==0 then
@@ -105,7 +107,8 @@ function _draw()
 
  color(9)
  print(scores[1],60,2)
- print(scores[2],60,127-6)
+-- print(scores[2],60,127-6)
+ print(stat(1),60,127-6)
 end
 -->8
 function equal(a,b)
@@ -121,6 +124,88 @@ function generate_targets()
 	   flr(rnd(64-10))+dy
 	  })
  end
+end
+
+function is_fire(p)
+ return
+  btnp(❎,p) or
+  p==0 and mouse_clicked()
+end
+
+function mouse_clicked()
+ if enable_mouse then
+  local state=stat(34)
+  if previous_mouse_state~=state then
+   previous_mouse_state=state
+   return state==1
+  end
+ end
+ return false
+end
+-->8
+function new_fizzlefader()
+ local x = 0
+ local y = 0
+-- local c = 1
+ local x2 = 0
+ local y2 = 0
+ local f = {}
+ local step = function()
+  -- next pixel
+  if x < 127 then
+   x += 1
+  elseif y < 127 then
+   x = 0
+   y += 1
+  else
+   x = 0
+   y = 0
+--   c = c + 1
+--   if c > 15 then
+--    c = 0
+--   end
+  end
+  
+  -- function for feistel
+  -- transform
+  --
+  -- this is the transform
+  -- from antirez's page, but
+  -- the final binary and is
+  -- 0x7f instead of 0xff to
+  -- match pico-8's drawable
+  -- range of 0,127
+  function f(n)
+   n = bxor((n*11)+shr(n,5)+7*127,n)
+   n = band(n,0x7f)
+   return n
+  end
+  
+  -- permute with feistel net
+  -- use x2 as "left", y2 as
+  -- "right"
+  x2=x
+  y2=y
+  for round=1,8 do
+   next_x2=y2
+   y2=bxor(x2,f(y2))
+   x2=next_x2
+  end
+  -- no need for a final
+  -- recomposition step
+  -- in our case:
+  -- we just use x2 and y2
+  -- (l and r) directly
+ end
+ 
+ f.draw = function(count)  
+  for i=0,count do
+   pset(x2,y2,0)
+   step()
+  end
+ end
+
+ return f
 end
 __gfx__
 0000000000080000000c0000077777777777777777777777a0a0a0a0000000000000000000000000000000000000000000000000000000000000000000000000
