@@ -34,7 +34,7 @@ function _update60()
   local p=i+1
   local d=1
   
-  if btn(🅾️,i) then
+  if not btn(🅾️,i) then
 	  if (btnp(➡️,i)) players[p][1]+=d
 		 if (btnp(⬅️,i)) players[p][1]-=d
 		 if (btnp(⬆️,i)) players[p][2]-=d
