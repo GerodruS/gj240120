@@ -2,6 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 18
 __lua__
 function _init()
+ fizzlefader=new_fizzlefader()
  cls()
  player_offset=3
  players_start={
@@ -12,22 +13,18 @@ function _init()
  enable_mouse=false
  if (enable_mouse) poke(0x5f2d,1)
 
- players={
-  {0,0},
-  {127,127}
- }
- 
- scores={0,0}
- 
+ players={{},{}} 
+ scores={}
  targets={}
- generate_targets()
  
- fizzlefader=new_fizzlefader()
+ init_game() 
 end
 
 function _update60()
  if count(targets)==0 then
-	 if (btnp(🅾️)) generate_targets()
+	 if btnp(🅾️) then
+   init_game()
+	 end
 	 return
  end
 
@@ -92,11 +89,12 @@ function _draw()
  map(0,0,0,0)
  
  if count(targets)==0 then
-	 color(9)
-	 print('player 1: ' .. scores[1],25,58)
-	 print('player 2: ' .. scores[2],25,64)
-	 color(7)
-	 print('press 🅾️ to continue',25,70)
+  color(8)
+  print('player 1: ★'..scores[1]..'★',25,58)
+  color(12)
+  print('player 2: ★'..scores[2]..'★',25,64)
+  color(7)
+  print('press 🅾️ to continue',25,70)
   return
  end
  
@@ -119,11 +117,23 @@ function _draw()
  spr(1,players[1][1]-player_offset,players[1][2]-player_offset)
  spr(2,players[2][1]-player_offset,players[2][2]-player_offset)
 
- color(9)
- print(scores[1],60,2)
- print(scores[2],60,127-6)
+ color(8)
+ print('★'..scores[1]..'★',54,2)
+ color(12)
+ print('★'..scores[2]..'★',54,127-6)
+-- color(7) print(stat(1),6,127-6)
 end
 -->8
+function init_game()
+ players[1][1]=0
+ players[1][2]=0
+ players[2][1]=127
+ players[2][2]=127
+ scores[1]=0
+ scores[2]=0
+ generate_targets()
+end
+
 function equal(a,b)
  return a[1]==b[1] and a[2]==b[2]
 end
