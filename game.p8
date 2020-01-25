@@ -114,7 +114,6 @@ function _draw()
  color(9)
  print(scores[1],60,2)
  print(scores[2],60,127-6)
--- print(stat(1),60,127-6)
 end
 -->8
 function equal(a,b)
@@ -150,68 +149,31 @@ function mouse_clicked()
 end
 -->8
 function new_fizzlefader()
- local x = 0
- local y = 0
--- local c = 1
- local x2 = 0
- local y2 = 0
- local f = {}
- local step = function()
-  -- next pixel
-  if x < 127 then
-   x += 1
-  elseif y < 127 then
-   x = 0
-   y += 1
-  else
-   x = 0
-   y = 0
---   c = c + 1
---   if c > 15 then
---    c = 0
---   end
-  end
+ local s=1
   
-  -- function for feistel
-  -- transform
-  --
-  -- this is the transform
-  -- from antirez's page, but
-  -- the final binary and is
-  -- 0x7f instead of 0xff to
-  -- match pico-8's drawable
-  -- range of 0,127
-  function f(n)
-   n = bxor((n*11)+shr(n,5)+7*127,n)
-   n = band(n,0x7f)
-   return n
-  end
-  
-  -- permute with feistel net
-  -- use x2 as "left", y2 as
-  -- "right"
-  x2=x
-  y2=y
-  for round=1,8 do
-   next_x2=y2
-   y2=bxor(x2,f(y2))
-   x2=next_x2
-  end
-  -- no need for a final
-  -- recomposition step
-  -- in our case:
-  -- we just use x2 and y2
-  -- (l and r) directly
- end
- 
- f.draw = function(count)  
-  for i=0,count do
-   pset(x2,y2,0)
-   step()
-  end
- end
+ local function lfsr_14()
+	 --14 13 12 2
+	 local a=bxor(s,shr(s,1))
+	 a=bxor(a,shr(s,2))
+	 a=bxor(a,shr(s,12))
+	 a=band(a,1)
+	 a=shl(a,13)
+	 
+	 local b=band(s,bnot(1))
+	 b=shr(b,1)
+	 
+	 s=bor(a,b)
+	 return s
+	end
 
- return f
+ return {
+  draw = function(n)
+   for i=1,n do
+    lfsr_14()
+    pset(s%128,s/128,0)
+   end
+  end
+ }
 end
 __gfx__
 0000000000080000000c0000077777777777777777777777a0a0a0a0000000000000000000000000000000000000000000000000000000000000000000000000
