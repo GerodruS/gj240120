@@ -127,11 +127,11 @@ function _draw()
  print('★'..scores[2]..'★',54,127-6)
 -- color(7) print(stat(1),6,127-6)
 
- if 0<=show_targets_t then
+ if 0<=show_targets_t and show_targets_t<2.9 then
   rectfill(62,9,64,13,0)
   color(7)
   print(ceil(show_targets_t),62,9)
- elseif -0.5<=show_targets_t then
+ elseif -0.5<=show_targets_t and show_targets_t<0 then
   rectfill(55,9,72,13,0)
   color(7)
   print('hunt!',55,9)
