@@ -55,7 +55,7 @@ function _update60()
   players[p][2]=min(127,players[p][2])
  
   if is_fire(i) then
-   local target_to_remove
+   target_to_remove=nil
    for t=1,count(targets) do
 		  local dx=targets[t][1]-players[p][1]-0.5
 		  local dy=targets[t][2]-players[p][2]-0.5
