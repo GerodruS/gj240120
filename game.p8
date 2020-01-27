@@ -153,6 +153,17 @@ function equal(a,b)
  return a[1]==b[1] and a[2]==b[2]
 end
 
+function has_near_target(p)
+ for t=1,count(targets) do
+  local dx=targets[t][1]-p[1]
+  local dy=targets[t][2]-p[2]
+  local d2=dx*dx+dy*dy  
+  if (d2<49) return true
+ end
+ 
+ return false
+end
+
 function generate_targets()
  for i=1,8 do
   local dx=i%2==0 and 16+8 or 64+8
@@ -161,7 +172,14 @@ function generate_targets()
    flr(rnd(3))*16+dx+flr(rnd(3))-2,
    flr(rnd(3))*16+dy+flr(rnd(3))-2
   }
-  --todo: remove dublicates
+  
+  while has_near_target(t) do
+   t={
+	   flr(rnd(3))*16+dx+flr(rnd(3))-2,
+	   flr(rnd(3))*16+dy+flr(rnd(3))-2
+	  }
+  end
+  
   add(targets,t)
  end
 end
