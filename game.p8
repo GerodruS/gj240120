@@ -81,6 +81,12 @@ function _update60()
    end
   end 
  end
+ 
+ local show_targets=
+  equal(players[1],players_start[1]) and equal(players[2],players_start[2]) or
+  equal(players[1],players_start[2]) and equal(players[2],players_start[1])
+ if (not show_targets) show_targets_t=3
+ show_targets_t=max(show_targets_t-1/60,-1)
 end
 
 function _draw()
@@ -98,9 +104,7 @@ function _draw()
   return
  end
  
- local show_targets=
-  equal(players[1],players_start[1]) and equal(players[2],players_start[2]) or
-  equal(players[1],players_start[2]) and equal(players[2],players_start[1])
+ local show_targets=show_targets_t<=0
  
  if show_targets then
 	 for i=1,count(targets) do
@@ -122,6 +126,16 @@ function _draw()
  color(12)
  print('★'..scores[2]..'★',54,127-6)
 -- color(7) print(stat(1),6,127-6)
+
+ if 0<=show_targets_t then
+  rectfill(62,9,64,13,0)
+  color(7)
+  print(ceil(show_targets_t),62,9)
+ elseif -0.5<=show_targets_t then
+  rectfill(55,9,72,13,0)
+  color(7)
+  print('hunt!',55,9)
+ end
 end
 -->8
 function init_game()
@@ -132,6 +146,7 @@ function init_game()
  scores[1]=0
  scores[2]=0
  generate_targets()
+ show_targets_t=0
 end
 
 function equal(a,b)
